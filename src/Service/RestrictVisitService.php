@@ -47,6 +47,13 @@ class RestrictVisitService implements RestrictVisitServiceInterface
 	private $currentUserIp;
 
 	/**
+	 * The current TOKEN
+	 *
+	 * @var string
+	 */
+	private $currentToken;
+
+	/**
 	 * The Path Matcher service
 	 *
 	 * @var \Drupal\Core\Path\PathMatcherInterface
@@ -75,6 +82,7 @@ class RestrictVisitService implements RestrictVisitServiceInterface
 		$this->currentPath = strtolower($currentPathStack->getPath());
 		$this->config = $configFactory->get('restrict_visit.settings');
 		$this->currentUserIp = $requestStack->getCurrentRequest()->getClientIp();
+		$this->currentToken = $requestStack->getCurrentRequest()->query->get('ref');
 	}
 
 
@@ -163,6 +171,17 @@ class RestrictVisitService implements RestrictVisitServiceInterface
 		return $this->currentPath;
 	}
 
+		/**
+	 * {@inheritdoc}
+	 */
+	public function getCurrentToken()
+	{
+		return $this->currentToken;
+	}
+
+	public function matchToken(string $token) {
+		return $this->currentToken === $token || $_SESSION['restrict_visit'] === $token;
+	}
 	/**
 	 * {@inheritdoc}
 	 */
