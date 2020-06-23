@@ -87,29 +87,40 @@ class RestrictVisitEventSubscriber implements EventSubscriberInterface
 
 	public function checkIpRestricted(GetResponseEvent $event)
 	{
-		$url = Url::fromRoute('user.login');
-		if($this->restrictIpService->getCurrentPath() != '/user/login') {
-			$event->setResponse(new RedirectResponse($url->toString() . '?q=33333'));
-		}
+    // TODO: Redirect to '/restrict_visit/access_denied'
+    $REDIRECT_ROUTE = 'user.login';
+    $REDIRECT_PATH = '/user/login';
+
+		if (\Drupal::currentUser()->isAuthenticated()) {
+		  return;
+    } 
+    
+		// $url = Url::fromRoute($REDIRECT_ROUTE);
+		// if($this->restrictIpService->getCurrentPath() != $REDIRECT_PATH) {
+		// 	$event->setResponse(new RedirectResponse($url->toString() . '?q=33333'));
+		// }
 		
-		return;
+		// return;
 
 		unset($_SESSION['restrict_visit']);
 
-		$this->restrictIpService->testForBlock();
+		// $this->restrictIpService->testForBlock();
 
-		if($this->restrictIpService->getCurrentPath() != '/restrict_visit/access_denied')
+		if($this->restrictIpService->getCurrentPath() != $REDIRECT_PATH)
 		{
 			if($this->moduleHandler->moduleExists('dblog') && $this->config->get('dblog'))
 			{
 				$this->loggerFactory->get('Restrict IP')->warning('Access to the path %path was blocked for the IP address %ip_address', ['%path' => $this->restrictIpService->getCurrentPath(), '%ip_address' => $this->restrictIpService->getCurrentUserIp()]);
 			}
 
+      // Redirect the user to the change password page
+      $url = Url::fromRoute($REDIRECT_ROUTE);
+      $event->setResponse(new RedirectResponse($url->toString()));
+
 			// if($this->config->get('allow_role_bypass') && $this->config->get('bypass_action') === 'redirect_login_page')
 			// {
 			// 	// Redirect the user to the change password page
 			// 	$url = Url::fromRoute('user.login');
-
 			// 	$event->setResponse(new RedirectResponse($url->toString()));
 			// }
 			// elseif(in_array($this->config->get('white_black_list'), [0, 1]))
