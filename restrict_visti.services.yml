@@ -1,0 +1,30 @@
+parameters:
+  restrict_visit.service.class: Drupal\restrict_visit\Service\RestrictVisitService
+  restrict_visit.event_subscriber.class: Drupal\restrict_visit\EventSubscriber\RestrictVisitEventSubscriber
+
+services:
+  restrict_visit.mapper:
+    class: '%restrict_visit.mapper.class%'
+    arguments:
+      - '@database'
+
+  restrict_visit.service:
+    class: '%restrict_visit.service.class%'
+    arguments:
+      - '@current_user'
+      - '@path.current'
+      - '@config.factory'
+      - '@request_stack'
+      - '@restrict_visit.mapper'
+      - '@path.matcher'
+
+  restrict_visit.event_subscriber:
+    class: '%restrict_visit.event_subscriber.class%'
+    arguments:
+      - '@restrict_visit.service'
+      - '@config.factory'
+      - '@logger.factory'
+      - '@module_handler'
+      - '@url_generator'
+    tags:
+      - {name: event_subscriber}
