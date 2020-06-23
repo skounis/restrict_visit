@@ -3,11 +3,6 @@ parameters:
   restrict_visit.event_subscriber.class: Drupal\restrict_visit\EventSubscriber\RestrictVisitEventSubscriber
 
 services:
-  restrict_visit.mapper:
-    class: '%restrict_visit.mapper.class%'
-    arguments:
-      - '@database'
-
   restrict_visit.service:
     class: '%restrict_visit.service.class%'
     arguments:
@@ -15,7 +10,6 @@ services:
       - '@path.current'
       - '@config.factory'
       - '@request_stack'
-      - '@restrict_visit.mapper'
       - '@path.matcher'
 
   restrict_visit.event_subscriber:

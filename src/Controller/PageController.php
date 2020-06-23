@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\restrict_ip\Controller;
+namespace Drupal\restrict_visit\Controller;
 
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -85,7 +85,7 @@ class PageController extends ControllerBase implements PageControllerInterface
 		$page = [
 			'#prefix' => '<div id="restrict_ip_config_page">',
 			'#suffix' => '</div.',
-			'form' => $this->formBuilder->getForm('\Drupal\restrict_ip\Form\ConfigForm'),
+			'form' => $this->formBuilder->getForm('\Drupal\restrict_visit\Form\ConfigForm'),
 		];
 
 		return $page;
@@ -96,7 +96,7 @@ class PageController extends ControllerBase implements PageControllerInterface
 	 */
 	public function accessDeniedPage()
 	{
-		if(!isset($_SESSION['restrict_ip']) || !$_SESSION['restrict_ip'])
+		if(!isset($_SESSION['restrict_visit']) || !$_SESSION['restrict_visit'])
 		{
 			return new RedirectResponse(Url::fromRoute('<front>')->toString());
 		}

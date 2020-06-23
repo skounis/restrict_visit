@@ -47,13 +47,6 @@ class RestrictVisitService implements RestrictVisitServiceInterface
 	private $currentUserIp;
 
 	/**
-	 * The Restrict IP data mapper
-	 *
-	 * @var \Drupal\restrict_visit\Mapper\RestrictIpMapperInterface
-	 */
-	protected $mapper;
-
-	/**
 	 * The Path Matcher service
 	 *
 	 * @var \Drupal\Core\Path\PathMatcherInterface
@@ -77,7 +70,6 @@ class RestrictVisitService implements RestrictVisitServiceInterface
 	public function __construct(AccountProxyInterface $currentUser, CurrentPathStack $currentPathStack, ConfigFactoryInterface $configFactory, RequestStack $requestStack, PathMatcherInterface $pathMatcher)
 	{
 		$this->currentUser = $currentUser;
-		$this->mapper = $restrictIpMapper;
 		$this->pathMatcher = $pathMatcher;
 
 		$this->currentPath = strtolower($currentPathStack->getPath());
@@ -85,18 +77,6 @@ class RestrictVisitService implements RestrictVisitServiceInterface
 		$this->currentUserIp = $requestStack->getCurrentRequest()->getClientIp();
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function userIsBlocked()
-	{
-		if($this->allowAccessByPermission())
-		{
-			return FALSE;
-		}
-
-		return $this->blocked;
-	}
 
 	/**
 	 * {@inheritdoc}

@@ -87,39 +87,43 @@ class RestrictVisitEventSubscriber implements EventSubscriberInterface
 
 	public function checkIpRestricted(GetResponseEvent $event)
 	{
+		$url = Url::fromRoute('user.login');
+		if($this->restrictIpService->getCurrentPath() != '/user/login') {
+			$event->setResponse(new RedirectResponse($url->toString() . '?q=33333'));
+		}
+		
+		return;
+
 		unset($_SESSION['restrict_visit']);
 
 		$this->restrictIpService->testForBlock();
 
-		if($this->restrictIpService->userIsBlocked())
+		if($this->restrictIpService->getCurrentPath() != '/restrict_visit/access_denied')
 		{
-			if($this->restrictIpService->getCurrentPath() != '/restrict_visit/access_denied')
+			if($this->moduleHandler->moduleExists('dblog') && $this->config->get('dblog'))
 			{
-				if($this->moduleHandler->moduleExists('dblog') && $this->config->get('dblog'))
-				{
-					$this->loggerFactory->get('Restrict IP')->warning('Access to the path %path was blocked for the IP address %ip_address', ['%path' => $this->restrictIpService->getCurrentPath(), '%ip_address' => $this->restrictIpService->getCurrentUserIp()]);
-				}
-
-				if($this->config->get('allow_role_bypass') && $this->config->get('bypass_action') === 'redirect_login_page')
-				{
-					// Redirect the user to the change password page
-					$url = Url::fromRoute('user.login');
-
-					$event->setResponse(new RedirectResponse($url->toString()));
-				}
-				elseif(in_array($this->config->get('white_black_list'), [0, 1]))
-				{
-					$url = Url::fromRoute('restrict_visit.access_denied_page');
-
-					$event->setResponse(new RedirectResponse($url->toString()));
-				}
-				else
-				{
-					$this->setMessage(t('The page you are trying to access cannot be accessed from your IP address.'));
-					$url = $this->urlGenerator->generateFromRoute('<front>');
-					$event->setResponse(new RedirectResponse($url));
-				}
+				$this->loggerFactory->get('Restrict IP')->warning('Access to the path %path was blocked for the IP address %ip_address', ['%path' => $this->restrictIpService->getCurrentPath(), '%ip_address' => $this->restrictIpService->getCurrentUserIp()]);
 			}
+
+			// if($this->config->get('allow_role_bypass') && $this->config->get('bypass_action') === 'redirect_login_page')
+			// {
+			// 	// Redirect the user to the change password page
+			// 	$url = Url::fromRoute('user.login');
+
+			// 	$event->setResponse(new RedirectResponse($url->toString()));
+			// }
+			// elseif(in_array($this->config->get('white_black_list'), [0, 1]))
+			// {
+			// 	$url = Url::fromRoute('restrict_visit.access_denied_page');
+
+			// 	$event->setResponse(new RedirectResponse($url->toString()));
+			// }
+			// else
+			// {
+			// 	$this->setMessage(t('The page you are trying to access cannot be accessed from your IP address.'));
+			// 	$url = $this->urlGenerator->generateFromRoute('<front>');
+			// 	$event->setResponse(new RedirectResponse($url));
+			// }
 		}
 	}
 

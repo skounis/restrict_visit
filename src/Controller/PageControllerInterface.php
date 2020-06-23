@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\restrict_ip\Controller;
+namespace Drupal\restrict_visit\Controller;
 
 interface PageControllerInterface
 {

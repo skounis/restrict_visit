@@ -4,14 +4,6 @@ namespace Drupal\restrict_visit\Service;
 
 interface RestrictVisitServiceInterface
 {
-	/**
-	 * Test if the user is blocked
-	 *
-	 * @return bool
-	 *   TRUE if the user is blocked
-	 *   FALSE if the user is not blocked
-	 */
-	public function userIsBlocked();
 
 	/**
 	 * Run all tests to see if the current user should be blocked or not
